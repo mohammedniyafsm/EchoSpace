@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
-
 
 @custom-variant dark (&:is(.dark *));
 
@@ -12,10 +13,33 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Unbounded-Medium';
+  src: url('/fonts/Unbounded-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
 
 @theme inline {
   --font-neogrotesk-sc-bold: "Neogrotesk Sc Bold", sans-serif;
   --font-zalando: "Zalando Sans Expanded", sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-unbounded: 'Unbounded', sans-serif;
+
+  /* Colors, border-radius, and animations here */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --animate-shiny-text: shiny-text 8s infinite;
+  @keyframes shiny-text {
+  0%, 90%, 100% {
+    background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+  30%, 60% {
+    background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
 }
 
 @theme inline {
@@ -185,8 +209,6 @@
 
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -198,11 +220,16 @@
 }
 
 @layer utilities {
+  /* Gradient utilities */
   .bg-gradient-radial {
     background-image: radial-gradient(circle at center, var(--gradient-from), var(--gradient-to));
   }
 
-  /* Custom font utilities */
+  /* Font utilities */
+  .font-inter {
+    font-family: var(--font-inter);
+  }
+
   .font-zalando {
     font-family: var(--font-zalando);
   }
@@ -210,4 +237,24 @@
   .font-neogrotesk {
     font-family: var(--font-neogrotesk-sc-bold);
   }
+}
+/* Hide scrollbar globally (works inside modals, dialogs, etc.) */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;   /* Chrome/Safari/Opera */
+}
+
+/* Also force-hide scrollbars inside Radix portals */
+[data-radix-popper-content-wrapper] .scrollbar-hide::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+[data-radix-popper-content-wrapper] .scrollbar-hide {
+  scrollbar-width: none;
 }

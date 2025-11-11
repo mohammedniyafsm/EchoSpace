@@ -1,4 +1,5 @@
 import { Button } from "../ui/button"
+import Link from 'next/link'
 
 export const Navbar =()=>{
     return(
@@ -9,10 +10,10 @@ export const Navbar =()=>{
             <h1 className="text-white text-md font-sans">EchoSpace</h1>
         </div>
         <div className="flex gap-8 justify-center  border bg-black shadow-xs w-96 h-8  items-center rounded-md font-light">
-            <h1 className="">Home</h1>
-            <h1 className="text-[#ADADAD]">Sessions</h1>
-            <h1 className="text-[#ADADAD]">Feedback</h1>
-            <h1 className="text-[#ADADAD]">Ideas</h1>
+             <Link className="text-[#ADADAD]" href="/">Home</Link>
+             <Link className="text-[#ADADAD]" href="/session">Sessions</Link>
+             <Link className="text-[#ADADAD]" href="/feedback">Feedback</Link>
+             <Link className="text-[#ADADAD]" href="/ideas">Ideas</Link>
         </div>
         <div className="flex gap-4">
             <Button variant={"outline"}>Log in</Button>

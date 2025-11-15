@@ -54,8 +54,9 @@ export default function FeedBack() {
   const trimmed = search.trim();
 
   if (isSearching) {
-    query = `topic=${trimmed}&date=${selectedDate ? formatQueryDate(selectedDate) : ""
+    query = `topic=${trimmed}&username=${trimmed}&date=${selectedDate ? formatQueryDate(selectedDate) : ""
       }`;
+
   }
 
   return (

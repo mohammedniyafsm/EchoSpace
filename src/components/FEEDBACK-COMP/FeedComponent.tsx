@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import  {FeedCard}  from "../ui/FeedCard";
+import  FeedCard  from "./feedcard/FeedCard";
 import { bricolage_grotesque } from "@/lib/fonts";
 import CardSkeleton from "../ui/CardSkeleton";
 
@@ -19,7 +19,6 @@ export default function FeedComponent({ heading, query }: FeedProps) {
     async function fetchData() {
       setLoading(true);
       const res = await axios.get(`/api/section/user/search?${query}`);
-      console.log(res.data,"this from fetch data")
       setSections(res.data.sections || []);
       setLoading(false);
     }

@@ -14,82 +14,46 @@ export async function GET(req: Request) {
         const url = new URL(req.url);
         const searchParams = url.searchParams;
 
-        const topic = searchParams.get('topic');
-        const category = searchParams.get('category');
-        const username = searchParams.get('username');
-        const date = searchParams.get('date');
+        const topic = searchParams.get("topic");
+        const username = searchParams.get("username");
+        const description = searchParams.get("description");
+        const date = searchParams.get("date");
 
-        const filters: any = {}
+        const filters: any = {};
 
-        if (topic) {
-            filters.topic = {
-                contains: topic,
-                mode: "insensitive"
-            }
+        // OR search across topic, description, username
+        const orFilters: any[] = [];
+
+        if (topic) orFilters.push({ topic: { contains: topic, mode: "insensitive" } });
+        if (description) orFilters.push({ description: { contains: description, mode: "insensitive" } });
+        if (username) orFilters.push({ user: { username: { contains: username, mode: "insensitive" } } });
+
+        if (orFilters.length) {
+            filters.OR = orFilters;
         }
 
-        if (category) {
-            filters.category = {
-                contains: category.toUpperCase(),
-                mode: "insensitive"
-            }
-        }
-
+        // Date filter
         if (date) {
             const start = new Date(date);
             start.setHours(0, 0, 0, 0);
-
             const end = new Date(date);
             end.setHours(23, 59, 59, 999);
-
-            filters.date = {
-                gte: start,
-                lte: end
-            };
+            filters.date = { gte: start, lte: end };
         }
-
-
-        let userFilter = {};
-        if (username) {
-            userFilter = {
-                user: {
-                    username: {
-                        contains: username,
-                        mode: "insensitive",
-                    },
-                },
-            };
-        }
-
-        console.log(date)
 
         const sections = await prisma.section.findMany({
-            where: {
-                AND: [filters, userFilter],
-            },
+            where: filters,
             include: {
-                user: {
-                    select: {
-                        username: true,
-                    },
-                },
-                _count: {
-                    select: {
-                        feedback: true,
-                        sectionLikes: true,
-                    },
-                },
+                user: { select: { username: true } },
+                _count: { select: { feedback: true, sectionLikes: true } },
                 sectionLikes: {
-                    where: {
-                        userId: session.user.id, 
-                    },
-                    select: {
-                        id: true,
-                    },
+                    where: { userId: session.user.id },
+                    select: { id: true },
                 },
             },
             orderBy: { date: "asc" },
         });
+
         return NextResponse.json({ sections })
     } catch (error) {
         console.error(error);

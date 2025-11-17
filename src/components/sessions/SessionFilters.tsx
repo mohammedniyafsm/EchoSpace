@@ -12,7 +12,7 @@ interface Props {
   onCategoryChange: (c: string | null) => void;
 }
 
-const CATEGORIES = ["All", "TED Talk", "Workshop", "Daily", "Talk", "Event"];
+const CATEGORIES = ["All", "TECHS PARK", "Workshop", "Daily", "Talk", "Event"];
 
 export default function SessionFilters({ selectedDate, onDateChange, category, onCategoryChange }: Props) {
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -20,18 +20,7 @@ export default function SessionFilters({ selectedDate, onDateChange, category, o
   return (
     <div className="flex gap-3 items-center">
       {/* Category select */}
-      <Select value={category ?? "All"} onValueChange={(v) => onCategoryChange(v === "All" ? null : v)}>
-        <SelectTrigger className="min-w-[140px]">
-          <SelectValue placeholder="Category" />
-        </SelectTrigger>
-        <SelectContent>
-          {CATEGORIES.map((c) => (
-            <SelectItem value={c} key={c}>
-              {c}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    
 
       {/* Inline calendar (small) */}
       <div className="relative">
@@ -40,16 +29,29 @@ export default function SessionFilters({ selectedDate, onDateChange, category, o
         </Button>
 
         {calendarOpen && (
-          <div className="absolute z-40 mt-2">
             <div className="bg-card/40 border border-border rounded-lg p-3">
               <Calendar
                 mode="single"
                 selected={selectedDate ?? undefined}
                 onSelect={(d) => {
-                  onDateChange(d ?? null);
+                  if (!d) return;
+
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  const clickedDate = new Date(d);
+                  clickedDate.setHours(0, 0, 0, 0);
+
+                  if (clickedDate < today) {
+                    alert("Cannot view past sessions");
+                    return;
+                  }
+
+                  onDateChange(d);
                   setCalendarOpen(false);
                 }}
               />
+
               <div className="mt-2 flex gap-2">
                 <Button variant="ghost" onClick={() => { onDateChange(null); setCalendarOpen(false); }}>Clear</Button>
               </div>

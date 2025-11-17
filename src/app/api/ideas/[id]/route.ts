@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 
-// ✅ GET — Fetch one idea
+//  GET — Fetch one idea
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   try {
     const id = await params.id;
@@ -27,15 +27,16 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
 }
 
-// ✅ PATCH — Update an idea (only by the author)
+//  PATCH — Update an idea (only by the author)
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
+    const { id } =  await params;
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const existing = await prisma.ideas.findUnique({ where: { id: params.id } });
+    const existing = await prisma.ideas.findUnique({ where:  { id } });
     if (!existing) {
       return NextResponse.json({ error: "Idea not found" }, { status: 404 });
     }
@@ -47,7 +48,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const { category, title, description, anonymous } = await request.json();
 
     const updated = await prisma.ideas.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         category: category ?? existing.category,
         title: title ?? existing.title,
@@ -63,15 +64,20 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-// ✅ DELETE — Delete an idea (only by the author)
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+//  DELETE — Delete an idea (only by the author)
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  const { id } =  await params;
+  if (!id) {
+    return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+  }
+
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const existing = await prisma.ideas.findUnique({ where: { id: params.id } });
+    const existing = await prisma.ideas.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Idea not found" }, { status: 404 });
     }
@@ -80,7 +86,7 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "Not allowed" }, { status: 403 });
     }
 
-    await prisma.ideas.delete({ where: { id: params.id } });
+    await prisma.ideas.delete({ where: { id } });
     return NextResponse.json({ message: "Idea deleted successfully" }, { status: 200 });
   } catch (error) {
     console.error("Error deleting idea:", error);

@@ -6,7 +6,7 @@ import { authOptions } from "../../auth/[...nextauth]/options";
 //  GET — Fetch one idea
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   try {
-    const id = await params.id;
+    const {id} = await params;
     const idea = await prisma.ideas.findUnique({
       where: { id: id },
       include: {

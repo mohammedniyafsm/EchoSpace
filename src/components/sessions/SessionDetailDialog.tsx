@@ -37,7 +37,6 @@ export default function SessionDetailDialog({ session, children }: { session: an
             <li><strong>Duration:</strong> {session.durationMin} min</li>
           </ul>
         </div>
-
         <DialogFooter className="mt-6 flex items-center justify-end gap-2">
           <DialogClose asChild>
             <Button variant="outline">Close</Button>

@@ -8,8 +8,11 @@ import { Input } from "@/components/ui/input";
 import { TextAnimate } from "@/components/ui/text-animate";
 import FeedComponent from "@/components/FEEDBACK-COMP/FeedComponent";
 import { bricolage_grotesque, inter } from "@/lib/fonts";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default function FeedBack() {
+  const { data: session, status } = useSession();
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isSearching, setIsSearching] = useState(false);
@@ -18,7 +21,12 @@ export default function FeedBack() {
   const yesterday = new Date(Date.now() - 86400000);
   const dayBefore = new Date(Date.now() - 2 * 86400000);
 
-  // Format for display
+  if (status === "loading") return null;
+
+  if (!session) {
+    redirect("/sign-in");
+  }
+
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -26,15 +34,13 @@ export default function FeedBack() {
       year: "numeric",
     });
 
-  // Format for query (YYYY-MM-DD) preserving local date
   const formatQueryDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   };
 
-  // Handle search click
   const handleSearch = () => {
     if (selectedDate && selectedDate > new Date()) {
       alert("You cannot search for future sessions.");
@@ -43,7 +49,6 @@ export default function FeedBack() {
     setIsSearching(true);
   };
 
-  // Reset search
   const resetAll = () => {
     setSearch("");
     setSelectedDate(undefined);
@@ -54,16 +59,16 @@ export default function FeedBack() {
   const trimmed = search.trim();
 
   if (isSearching) {
-    query = `topic=${trimmed}&username=${trimmed}&date=${selectedDate ? formatQueryDate(selectedDate) : ""
-      }`;
-
+    query = `topic=${trimmed}&username=${trimmed}&date=${
+      selectedDate ? formatQueryDate(selectedDate) : ""
+    }`;
   }
 
   return (
-    <div className="bg-black min-h-screen w-full text-white">
-      <div className="pt-28 flex flex-col items-center">
+    <div className="bg-black min-h-screen w-full text-white px-4">
+      <div className="pt-28 flex flex-col items-center text-center">
 
-        <div className="group rounded-full bg-neutral-100/10 px-4 py-1">
+        <div className="group rounded-full bg-neutral-100/10 px-4 py-1 text-sm">
           ✨ All Sessions Archive
         </div>
 
@@ -71,7 +76,7 @@ export default function FeedBack() {
           <TextAnimate
             animation="blurInUp"
             by="character"
-            className={`${bricolage_grotesque} text-6xl font-semibold`}
+            className={`${bricolage_grotesque} text-4xl md:text-6xl font-semibold leading-tight`}
           >
             Explore All Sessions
           </TextAnimate>
@@ -79,74 +84,76 @@ export default function FeedBack() {
           <TextAnimate
             animation="blurInUp"
             by="character"
-            className={`${inter} pt-4 text-neutral-400`}
+            className={`${inter} pt-4 text-neutral-400 text-sm md:text-base`}
           >
             Browse through daily sessions and interesting presentations
           </TextAnimate>
 
-          <div className="flex gap-4 items-center mt-8">
-
+          {/* SEARCH + BUTTONS + DATE PICKER */}
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center mt-10 w-full">
+            
             {/* SEARCH INPUT */}
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="🔍 Search by topic or presenter..."
-              className="py-6 px-4 w-[600px] rounded-2xl bg-neutral-900 border border-neutral-700"
+              className="py-5 px-4 w-full md:w-[500px] max-w-lg rounded-2xl bg-neutral-900 border border-neutral-700"
             />
 
-            <Button variant="outline" onClick={handleSearch}>
-              Search
-            </Button>
-
-            {/* RESET BUTTON */}
-            {isSearching && (
-              <Button variant="destructive" onClick={resetAll}>
-                Reset
+            <div className="flex gap-3 flex-wrap justify-center">
+              <Button variant="outline" onClick={handleSearch}>
+                Search
               </Button>
-            )}
 
-            {/* DATE PICKER */}
-            <Dialog.Root>
-              <Dialog.Trigger asChild>
-                <Button>
-                  {selectedDate ? formatDate(selectedDate) : "Select Date"}
+              {isSearching && (
+                <Button variant="destructive" onClick={resetAll}>
+                  Reset
                 </Button>
-              </Dialog.Trigger>
+              )}
 
-              <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background p-6 rounded-xl shadow-lg">
-                <Dialog.Title className="text-lg font-semibold mb-3">
-                  Pick a Date
-                </Dialog.Title>
+              {/* DATE PICKER */}
+              <Dialog.Root>
+                <Dialog.Trigger asChild>
+                  <Button>
+                    {selectedDate ? formatDate(selectedDate) : "Select Date"}
+                  </Button>
+                </Dialog.Trigger>
 
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(d) => {
-                    if (d && d <= new Date()) {
-                      setSelectedDate(d);
-                      setIsSearching(true);
-                      return;
-                    } else {
-                      alert("Not Available");
-                      return;
-                    }
-                  }}
-                />
+                <Dialog.Content
+                  className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                             bg-background p-6 rounded-xl shadow-lg w-[90vw] max-w-sm"
+                >
+                  <Dialog.Title className="text-lg font-semibold mb-3">
+                    Pick a Date
+                  </Dialog.Title>
 
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(d) => {
+                      if (d && d <= new Date()) {
+                        setSelectedDate(d);
+                        setIsSearching(true);
+                      } else {
+                        alert("Not Available");
+                      }
+                    }}
+                  />
 
-                <div className="flex justify-end pt-4">
-                  <Dialog.Close asChild>
-                    <Button variant="outline">Close</Button>
-                  </Dialog.Close>
-                </div>
-              </Dialog.Content>
-            </Dialog.Root>
+                  <div className="flex justify-end pt-4">
+                    <Dialog.Close asChild>
+                      <Button variant="outline">Close</Button>
+                    </Dialog.Close>
+                  </div>
+                </Dialog.Content>
+              </Dialog.Root>
+            </div>
           </div>
         </div>
       </div>
 
       {/* FEED RESULTS */}
-      <div>
+      <div className="pt-10 pb-20 space-y-10">
         {isSearching ? (
           <FeedComponent heading="Search Results" query={query} />
         ) : (

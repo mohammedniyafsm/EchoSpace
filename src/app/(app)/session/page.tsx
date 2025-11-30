@@ -9,7 +9,8 @@ import { bricolage_grotesque } from "@/lib/fonts";
 import SessionList from "@/components/sessions/SessionList";
 import SessionFilters from "@/components/sessions/SessionFilters";
 import axios from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 interface Session {
   id: string;
@@ -30,6 +31,13 @@ export default function SessionsPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
+
+    const { data : session } = useSession();
+  
+
+    if (!session) {
+        redirect("/sign-in");
+      }
 
   // Only run client-specific code
   useEffect(() => {
@@ -107,7 +115,7 @@ export default function SessionsPage() {
           ✨ Sessions & Talks — This Week
         </div>
         <h1 className={`${bricolage_grotesque} mt-6 text-5xl md:text-6xl font-semibold`}>Explore Sessions</h1>
-        <p className="mt-3 max-w-2xl mx-auto text-neutral-400">
+        <p className="mt-3 max-w-2xl mx-auto text-xs md:text-base text-neutral-400">
           See who’s presenting this week, join live talks, and add reminders.
           Filter by date, category or search across sessions.
         </p>

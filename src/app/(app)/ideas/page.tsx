@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default function IdeasPage() {
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -42,6 +43,11 @@ export default function IdeasPage() {
   const [showPagination, setshowPagination] = useState(false);
 
   const { data : session } = useSession();
+
+  
+    if (!session) {
+      redirect("/sign-in");
+    }
 
   const fetchIdeas = async (page: number) => {
     try {

@@ -28,7 +28,7 @@ export const Navbar = () => {
         <div className="hidden md:flex gap-8 h-10 items-center font-light 
           absolute left-1/2 -translate-x-1/2">
           <Link className="text-[#ADADAD]" href="/">Home</Link>
-          <Link className="text-[#ADADAD]" href="/session">Sessions</Link>
+          <Link className="text-[#ADADAD]" href="/session">Upcoming</Link>
           <Link className="text-[#ADADAD]" href="/feedback">Feedback</Link>
           <Link className="text-[#ADADAD]" href="/ideas">Ideas</Link>
         </div>
@@ -68,7 +68,7 @@ export const Navbar = () => {
         <div className="md:hidden mt-20 w-full bg-black text-center flex flex-col gap-4 py-4">
 
           <Link onClick={closeMenu} className="text-[#ADADAD]" href="/">Home</Link>
-          <Link onClick={closeMenu} className="text-[#ADADAD]" href="/session">Sessions</Link>
+          <Link onClick={closeMenu} className="text-[#ADADAD]" href="/session">Upcoming</Link>
           <Link onClick={closeMenu} className="text-[#ADADAD]" href="/feedback">Feedback</Link>
           <Link onClick={closeMenu} className="text-[#ADADAD]" href="/ideas">Ideas</Link>
 

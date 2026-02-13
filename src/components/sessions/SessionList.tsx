@@ -29,7 +29,11 @@ export default function SessionList({ sessions, loading }: SessionListProps) {
   }
 
   if (!sessions || sessions.length === 0) {
-    return 
+    return (
+      <div className="rounded-xl border border-border bg-card/10 p-6 text-sm text-neutral-400">
+        No upcoming sessions found for the current filters.
+      </div>
+    );
   }
 
   return (

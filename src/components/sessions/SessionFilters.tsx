@@ -18,7 +18,7 @@ interface Props {
   onCategoryChange: (c: string | null) => void;
 }
 
-const CATEGORIES = ["All", "TECHS PARK", "Workshop", "Daily", "Talk", "Event"];
+const CATEGORIES = ["All", "SELF_INTRO", "QUOTE", "PRESENTATION"];
 
 export default function SessionFilters({
   selectedDate,
@@ -73,7 +73,7 @@ export default function SessionFilters({
                 clickedDate.setHours(0, 0, 0, 0);
 
                 if (clickedDate < today) {
-                  alert("Cannot view past sessions");
+                  alert("Past sessions are available in Feedback page.");
                   return;
                 }
 

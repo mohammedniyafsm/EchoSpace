@@ -1,7 +1,14 @@
+"use client";
+
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { MarqueeDemo } from "@/components/ui/marquee-demo";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
+  const getStartedHref = session ? "/feedback" : "/sign-in";
+
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen w-full bg-black text-white overflow-hidden">
       {/* Background Image */}
@@ -18,12 +25,12 @@ export default function Home() {
         </h1>
 
         <p className="text-[#b8b8b8] font-light mt-4 text-[9px] xl:text-base    tracking-wide">
-          Empowering meaningful feedback with seamless sharing, <br />
-          smart insights, and real growth in one place.
+          Join upcoming sessions, then give feedback on completed sessions. <br />
+          Echo Space keeps sessions and feedback clearly separated.
         </p>
 
-        <RainbowButton className="mt-8 px-8 py-5 text-base font-medium rounded-xl">
-          Get Started
+        <RainbowButton asChild className="mt-8 px-8 py-5 text-base font-medium rounded-xl">
+          <Link href={getStartedHref}>Get Started</Link>
         </RainbowButton>
       </div>
 

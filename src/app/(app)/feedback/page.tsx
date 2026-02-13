@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,27 @@ export default function FeedBack() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isSearching, setIsSearching] = useState(false);
 
-  const today = new Date();
-  const yesterday = new Date(Date.now() - 86400000);
-  const dayBefore = new Date(Date.now() - 2 * 86400000);
+  const { todayStart, yesterday, dayBefore, threeDaysAgo } = useMemo(() => {
+    const now = new Date();
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+
+    const y = new Date(start);
+    y.setDate(y.getDate() - 1);
+
+    const two = new Date(start);
+    two.setDate(two.getDate() - 2);
+
+    const three = new Date(start);
+    three.setDate(three.getDate() - 3);
+
+    return {
+      todayStart: start,
+      yesterday: y,
+      dayBefore: two,
+      threeDaysAgo: three,
+    };
+  }, []);
 
   if (status === "loading") return null;
 
@@ -42,8 +60,13 @@ export default function FeedBack() {
   };
 
   const handleSearch = () => {
-    if (selectedDate && selectedDate > new Date()) {
-      alert("You cannot search for future sessions.");
+    if (!selectedDate) {
+      alert("Select a past date to search completed sessions.");
+      return;
+    }
+
+    if (selectedDate && selectedDate >= todayStart) {
+      alert("Feedback can be given only for sessions from past dates.");
       return;
     }
     setIsSearching(true);
@@ -69,7 +92,7 @@ export default function FeedBack() {
       <div className="pt-28 flex flex-col items-center text-center">
 
         <div className="group rounded-full bg-neutral-100/10 px-4 py-1 text-sm">
-          ✨ All Sessions Archive
+          ✨ Completed Sessions
         </div>
 
         <div className="text-center pt-8">
@@ -78,7 +101,7 @@ export default function FeedBack() {
             by="character"
             className={`${bricolage_grotesque} text-4xl md:text-6xl font-semibold leading-tight`}
           >
-            Explore All Sessions
+            Give Feedback for Completed Sessions
           </TextAnimate>
 
           <TextAnimate
@@ -86,7 +109,8 @@ export default function FeedBack() {
             by="character"
             className={`${inter} pt-4 text-neutral-400 text-sm md:text-base`}
           >
-            Browse through daily sessions and interesting presentations
+            Use this page for sessions that already happened. For upcoming sessions,
+            open the Sessions page.
           </TextAnimate>
 
           {/* SEARCH + BUTTONS + DATE PICKER */}
@@ -131,11 +155,11 @@ export default function FeedBack() {
                     mode="single"
                     selected={selectedDate}
                     onSelect={(d) => {
-                      if (d && d <= new Date()) {
+                      if (d && d < todayStart) {
                         setSelectedDate(d);
                         setIsSearching(true);
                       } else {
-                        alert("Not Available");
+                        alert("Select a past date.");
                       }
                     }}
                   />
@@ -159,16 +183,16 @@ export default function FeedBack() {
         ) : (
           <>
             <FeedComponent
-              heading="Today's Highlights"
-              query={`date=${formatQueryDate(today)}`}
-            />
-            <FeedComponent
-              heading="Yesterday's Highlights"
+              heading="Yesterday Sessions"
               query={`date=${formatQueryDate(yesterday)}`}
             />
             <FeedComponent
-              heading="Day Before"
+              heading="2 Days Ago"
               query={`date=${formatQueryDate(dayBefore)}`}
+            />
+            <FeedComponent
+              heading="3 Days Ago"
+              query={`date=${formatQueryDate(threeDaysAgo)}`}
             />
           </>
         )}

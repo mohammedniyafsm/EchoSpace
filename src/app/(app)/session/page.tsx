@@ -25,7 +25,7 @@ interface Session {
 }
 
 export default function SessionsPage() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => new Date());
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -37,7 +37,6 @@ export default function SessionsPage() {
   // Only run client-specific code
   useEffect(() => {
     setIsClient(true);
-    setSelectedDate(null);
   }, []);
 
   useEffect(() => {
@@ -141,7 +140,7 @@ export default function SessionsPage() {
               onClick={() => {
                 setQuery("");
                 setCategory(null);
-                setSelectedDate(null);
+                setSelectedDate(new Date());
               }}
               className="text-neutral-300"
             >

@@ -31,6 +31,9 @@ export const Navbar = () => {
           <Link className="text-[#ADADAD]" href="/session">Upcoming</Link>
           <Link className="text-[#ADADAD]" href="/feedback">Feedback</Link>
           <Link className="text-[#ADADAD]" href="/ideas">Ideas</Link>
+          {session?.user?.role === "ADMIN" && (
+            <Link className="text-[#ADADAD]" href="/admin">Admin</Link>
+          )}
         </div>
 
         {/* RIGHT SIDE (DESKTOP) */}
@@ -71,6 +74,9 @@ export const Navbar = () => {
           <Link onClick={closeMenu} className="text-[#ADADAD]" href="/session">Upcoming</Link>
           <Link onClick={closeMenu} className="text-[#ADADAD]" href="/feedback">Feedback</Link>
           <Link onClick={closeMenu} className="text-[#ADADAD]" href="/ideas">Ideas</Link>
+          {session?.user?.role === "ADMIN" && (
+            <Link onClick={closeMenu} className="text-[#ADADAD]" href="/admin">Admin</Link>
+          )}
 
           
 

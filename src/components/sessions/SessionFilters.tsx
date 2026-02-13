@@ -86,11 +86,11 @@ export default function SessionFilters({
               <Button
                 variant="ghost"
                 onClick={() => {
-                  onDateChange(null);
+                  onDateChange(new Date());
                   setCalendarOpen(false);
                 }}
               >
-                Clear
+                Today
               </Button>
             </div>
           </div>

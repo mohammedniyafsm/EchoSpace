@@ -9,7 +9,7 @@ async function verifyAdmin() {
   if (!session?.user?.id) return null;
 
   const user = await prisma.user.findUnique({
-    where: { githubId: session.user.id },
+    where: { id: session.user.id },
     select: { role: true },
   });
 

@@ -177,7 +177,7 @@ export default function FeedBack() {
       </div>
 
       {/* FEED RESULTS */}
-      <div className="pt-10 pb-20 space-y-10">
+      <div className="pt-4 pb-20 space-y-2">
         {isSearching ? (
           <FeedComponent heading="Search Results" query={query} />
         ) : (

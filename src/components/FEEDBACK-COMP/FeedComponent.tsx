@@ -11,22 +11,32 @@ interface FeedProps {
   query: string;
 }
 
+type SectionResult = {
+  id: string;
+  topic: string;
+  category: string;
+  date: string;
+  user: { username: string };
+  _count: { sectionLikes: number; feedback: number };
+  sectionLikes?: { id: string }[];
+};
+
 export default function FeedComponent({ heading, query }: FeedProps) {
-  const [sections, setSections] = useState<any[]>([]);
+  const [sections, setSections] = useState<SectionResult[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       const res = await axios.get(`/api/section/user/search?${query}`);
-      setSections(res.data.sections || []);
+      setSections((res.data.sections || []) as SectionResult[]);
       setLoading(false);
     }
     fetchData();
   }, [query]);
 
   return (
-    <section className="px-20 pt-16 pb-10 bg-black text-white">
+    <section className="px-4 md:px-10 xl:px-20 pt-6 pb-4 bg-black text-white">
       <h2 className={`${bricolage_grotesque} text-3xl font-semibold`}>
         {heading}
       </h2>
